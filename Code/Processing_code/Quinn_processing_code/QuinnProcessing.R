@@ -13,11 +13,16 @@
 # same base R operations weʻve been learning (dplyr, tidyr, skimr)
 
 ## ---- packages --------
+#Install needed packages
+install.packages(dplyr) #for data processing/cleaning
+install.packages(tidyr) #for data processing/cleaning
+install.packages(skimr)
 #load needed packages. make sure they are installed.
 require(dplyr) #for data processing/cleaning
 require(tidyr) #for data processing/cleaning
 require(skimr) #for nice visualization of data 
-
+#Ensure you are working in Code/Processing_code
+getwd()
 ## ---- loaddata --------
 #path to data
 # If you need to check your working directory, use getwd()
@@ -26,7 +31,7 @@ require(skimr) #for nice visualization of data
 # NEVER put a setwd() inside your code, it is bad ettiquite as it 
 # probably wonʻt work for anyone else. 
 
-dat_location <- "../../Data/Raw_data/penguins_raw_dirty.csv"
+data_location <- "../../Data/Raw_data/penguins_raw_dirty.csv"
 data_path <- "../../Data/Raw_data/"
 
 #load data. 
@@ -61,12 +66,13 @@ summary(rawdata)
 
 #yet another way to get an idea of the data
 head(rawdata)
+tail(rawdata)
 
 #this is a nice way to look at data
 skimr::skim(rawdata)
 
 #See all the data by just typing `rawdata` at the R console.
-
+rawdata
 #Note that the names here have spaces and () which are usable, but 
 # force us to quote the character strings. You can either keep doing so 
 # rawdata$`Culmen Length (mm)` or rename to something more convenient.
@@ -101,8 +107,27 @@ d1$Species <- sub("gTin", "guin", d1$Species)
 # look at partially fixed data again
 unique(d1$Species)
 
+d1$Species <- sub("gTin", "guin", d1$Species)
+unique(d1$Species)
+d1$Species <- sub("PeOg", "Peng", d1$Species)
+unique(d1$Species)
+d1$Species <- sub("AdeKie", "Adelie", d1$Species)
+unique(d1$Species)
+d1$Species <- sub("lieM", "lie ", d1$Species)
+unique(d1$Species)
+d1$Species <- sub("Ven", "Gen", d1$Species)
+unique(d1$Species)
+#shorten names
+ii <- grep("(Pygoscelis adeliae)", d1$Species)
+d1$Species[ii] <- "Adelie"
+unique(d1$Species)
+iii <- grep("(Pygoscelis papua)", d1$Species)
+d1$Species[iii] <- "Gentoo"
+unique(d1$Species)
+iiii <- grep("(Pygoscelis antarctica)", d1$Species)
+d1$Species[iiii] <- "Chinstrap"
+unique(d1$Species)
 ## ---- comment1 --------
-
 # Fix all of the errors. 
 
 #  Also, letʻs shorten Species just keeping the three common names "Adelie", 
@@ -124,7 +149,10 @@ cl <- d1$`Culmen Length (mm)` # OK so typing `Culmen Length (mm)` is really anno
                               # back to d1$`Culmen Length (mm)` when weʻre done. 
 
 cl[ cl == "missing" ] <- NA  # find cl=="missing and replace "missing" with NA
+cl #ensure "missing" was replaced
 cl <- as.numeric(cl)  # coerce to numeric
+class(cl) #ensure numeric
+head(cl) #quotes should now be gone from around numbers
 d1$`Culmen Length (mm)` <- cl
 
 # another way using dplyr from the tidyverse
@@ -221,10 +249,38 @@ skimr::skim(d3)
 ## ---- bivariateplots --------
 # Make bivariate plots for any remaining continous data to ensure there are no further
 # errors. It is a good check on the distribution of the data as well. 
-
+#check distributions
+hist(d3$`Culmen Depth (mm)`)
+hist(d3$`Flipper Length (mm)`)
+hist(d3$`Body Mass (g)`)
+hist(d3$`Delta 15 N (o/oo)`)
+hist(d3$`Delta 13 C (o/oo)`)
+#creating bivariate plots- comparing to Body Mass
+plot(d3$`Body Mass (g)`, d3$`Culmen Depth (mm)`)
+plot(d3$`Body Mass (g)`, d3$`Flipper Length (mm)`)
+plot(d3$`Body Mass (g)`, d3$`Culmen Depth (mm)`)
+plot(d3$`Body Mass (g)`, d3$`Delta 15 N (o/oo)`)
+plot(d3$`Body Mass (g)`, d3$`Delta 13 C (o/oo)`)
+plot(d3$`Delta 15 N (o/oo)`, d3$`Delta 13 C (o/oo)`)
 # Make histograms or densities of at least mass by discrete category, to check for any 
 # potential category errors, extra categories, etc.  
+#Can also do this visualization (and others) in ggplot2
+library(ggplot2) #load package
+ggplot(data = d3) #load cleaned data
 
+#map densities- can be done on all continous data
+ggplot(d3, aes(x = age)) +
+  geom_density()
+  
+#using ggplot histogram/barplots of body mass vs discrete categories 
+ggplot(d3, aes(x = Species, y = `Body Mass (g)`)) + 
+	geom_col()
+ggplot(d3, aes(x = Sex, y = `Body Mass (g)`)) + 
+	geom_col()
+ggplot(d3, aes(x = Island, y = `Body Mass (g)`)) + 
+	geom_col()
+
+  
 # You should look through all of the data, variable by variable, or by pairs of variables.
 
 
@@ -232,6 +288,8 @@ skimr::skim(d3)
 # Finalize your cleaned dataset. Drop any variables (columns) from the dataframe 
 # that you wonʻt analyze. If you have extra levels after dropping some values, 
 # you may want to relevel your factors (this may or may not happen). 
+d4 = subset(d3, select = -c(studyName,Comments))
+
 
 # To specify new levels or orders of levels:
 # new_factor <- factor(vec_extra_levels, levels=c("level1", "level2", ... ))
@@ -246,7 +304,7 @@ skimr::skim(d3)
 # makes it easier to add steps above
 
 ## ---- savedata --------
-processeddata <- d3      # change if you did more steps
+processeddata <- d4      # change if you did more steps
 
 # location to save file
 
