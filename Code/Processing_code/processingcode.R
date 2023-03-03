@@ -1,6 +1,6 @@
 ###############################
 # processing script
-#
+#Hello
 #this script loads the raw data, processes and cleans it 
 #and saves it as Rds file in the Processed_data folder
 #
@@ -26,7 +26,7 @@ require(skimr) #for nice visualization of data
 # NEVER put a setwd() inside your code, it is bad ettiquite as it 
 # probably wonʻt work for anyone else. 
 
-data_location <- "../../Data/Raw_data/penguins_raw_dirty.csv"
+dat_location <- "../../Data/Raw_data/penguins_raw_dirty.csv"
 data_path <- "../../Data/Raw_data/"
 
 #load data. 
