@@ -1,35 +1,22 @@
 ###############################
-# processing script
-#Hello
-#this script loads the raw data, processes and cleans it 
-#and saves it as Rds file in the Processed_data folder
-#
-# Note the ## ---- name ---- notation
-# This is called "code chunk labels" and is done so one can 
-# pull in the chunks of code into the Quarto document
-# see here: https://bookdown.org/yihui/rmarkdown-cookbook/read-chunk.html
-#
-# We are also using some tidyverse packages to do the 
-# same base R operations weʻve been learning (dplyr, tidyr, skimr)
-
+# The following script serves to visualize and summarize the data followed with some data cleaning
+#The first step is to install the following packages
 ## ---- packages --------
 #Install needed packages
-install.packages(dplyr) #for data processing/cleaning
-install.packages(tidyr) #for data processing/cleaning
+install.packages(dplyr) 
+install.packages(tidyr) 
 install.packages(skimr)
+install.packages(ggplot2) #for making figures
 #load needed packages. make sure they are installed.
 require(dplyr) #for data processing/cleaning
 require(tidyr) #for data processing/cleaning
 require(skimr) #for nice visualization of data 
+require(skimr) #for nice visualization of data 
+require(ggplot2) #for making plots
 #Ensure you are working in Code/Processing_code
 getwd()
 ## ---- loaddata --------
 #path to data
-# If you need to check your working directory, use getwd()
-# Either restart R in the correct directory, or navigate to it 
-# with setwd(...relative path to the correct directory...). 
-# NEVER put a setwd() inside your code, it is bad ettiquite as it 
-# probably wonʻt work for anyone else. 
 
 data_location <- "../../Data/Raw_data/penguins_raw_dirty.csv"
 data_path <- "../../Data/Raw_data/"
@@ -43,20 +30,12 @@ rawdata <- read.csv(data_location, check.names=FALSE)
 # We can look in the data dictionary for a variable explanation
 # I am using the paste function here to add the path to the filename. 
 # sep="" adds no space when pasting. 
-# I could have also just saved the complete path to the file and saved 
-# it as dictonary_path. It is up to you. 
 
 dictionary <- read.csv(paste(data_path, "datadictionary.csv", sep=""))
 print(dictionary)
 
 
 ## ---- exploredata --------
-
-#note that for functions that come from specific packages (instead of base R)
-# I often specify both package and function like so
-# package::function() that's not required one could just call the function
-# specifying the package makes it clearer where the function "lives",
-# but it adds typing. You can do it either way.
 
 #take a look at the data
 dplyr::glimpse(rawdata)
@@ -76,8 +55,7 @@ rawdata
 #Note that the names here have spaces and () which are usable, but 
 # force us to quote the character strings. You can either keep doing so 
 # rawdata$`Culmen Length (mm)` or rename to something more convenient.
-# Personally I would probably shorten everything, but to keep it more
-# recognizable for this exercise, I will leave it. Itʻs up to you. 
+# You may shorten/rename the names 
 
 # names(rawdata) <- c("study", "sampleN", "species", "region", "island", "stage", "id", ... )
 
@@ -94,17 +72,11 @@ unique(rawdata$Species)
 
 d1 <- rawdata
 
-#Use the techniques we learned in class to fix these errors. For example,
-# we can find the mispelled entry, and replace the whole thing:
-
-ii <- grep("PengTin", d1$Species)
-d1$Species[ii] <- "Adelie Penguin (Pygoscelis adeliae)"
-
-#Another way:
+#fix these errors in Species names
 
 d1$Species <- sub("gTin", "guin", d1$Species)
 
-# look at partially fixed data again
+# look at partially fixed data again- repeat everytime
 unique(d1$Species)
 
 d1$Species <- sub("gTin", "guin", d1$Species)
@@ -128,13 +100,10 @@ iiii <- grep("(Pygoscelis antarctica)", d1$Species)
 d1$Species[iiii] <- "Chinstrap"
 unique(d1$Species)
 ## ---- comment1 --------
-# Fix all of the errors. 
-
-#  Also, letʻs shorten Species just keeping the three common names "Adelie", 
-#  "Gentoo", and "Chinstrap" and delete the rest of the Species character string. 
+ 
 
 # NOTE: Check your work with each change.  Debug as you go, never all at once. 
-# Make sure that the code you save in your script works without error. 
+ 
 
 # There is an entry for `Culmen Length (mm)` which says "missing" instead of a number or NA. 
 # Should we delete this record (and all of the variables)?
@@ -168,7 +137,6 @@ hist(d1$`Culmen Length (mm)`)
 # letʻs also do a bivariate plot with mass
 plot(d1$`Body Mass (g)`, d1$`Culmen Length (mm)`)
 
-# Notice anything funny? 
 
 # Now we see that there are three penguins with really really long culmens (300+mm) 
 #  that could be typos. If we don't know, we might need to remove these penguins
@@ -204,7 +172,7 @@ plot(d2$`Body Mass (g)`, d2$`Culmen Length (mm)`)
 
 
 ## ---- comment3 --------
-Look better?
+#Look better?
 
 # Now let's look at body mass. 
 #  There are penguins with body mass of <100g when the others are over 3000. 
@@ -215,10 +183,7 @@ hist(d2$`Body Mass (g)`)
 
 ## ---- comment4 --------
 # Mass is the main size variable, so we will probably need to remove the individuals with 
-# missing masses in order to  be able to analyze the data. 
-# Note: Some analysis methods can deal with missing values, so it's not always necessary 
-# Or it may be fine to have it in some of the variables but probably not the size variable. 
-# This should be adjusted based on your planned analysis approach. 
+# missing masses in order to  be able to analyze the data.  
 
 ## ---- cleandata4.2 --------
 d3 <- d2
@@ -262,10 +227,9 @@ plot(d3$`Body Mass (g)`, d3$`Culmen Depth (mm)`)
 plot(d3$`Body Mass (g)`, d3$`Delta 15 N (o/oo)`)
 plot(d3$`Body Mass (g)`, d3$`Delta 13 C (o/oo)`)
 plot(d3$`Delta 15 N (o/oo)`, d3$`Delta 13 C (o/oo)`)
-# Make histograms or densities of at least mass by discrete category, to check for any 
-# potential category errors, extra categories, etc.  
+# Make barplots or densities of least mass by discrete category
 #Can also do this visualization (and others) in ggplot2
-library(ggplot2) #load package
+#ggplot2 was loaded earlier
 ggplot(data = d3) #load cleaned data
 
 #map densities- can be done on all continous data
@@ -280,14 +244,10 @@ ggplot(d3, aes(x = Sex, y = `Body Mass (g)`)) +
 ggplot(d3, aes(x = Island, y = `Body Mass (g)`)) + 
 	geom_col()
 
-  
-# You should look through all of the data, variable by variable, or by pairs of variables.
-
 
 ## ---- finalizedata --------
 # Finalize your cleaned dataset. Drop any variables (columns) from the dataframe 
-# that you wonʻt analyze. If you have extra levels after dropping some values, 
-# you may want to relevel your factors (this may or may not happen). 
+# Drop  
 d4 = subset(d3, select = -c(studyName,Comments))
 
 
@@ -314,24 +274,10 @@ saveRDS(processeddata, file = save_data_location)
 save_data_location_csv <- "../../Data/Processed_data/processeddata.csv"
 write.csv(processeddata, file = save_data_location_csv, row.names=FALSE)
 
-
+## ---- newdatadictionary --------
+#If needed, the updated data dictionary can be loaded
+newdictionary <- read.csv(paste(data_path, "Quinndatadictionary.csv", sep=""))
+print(newdictionary)
 ## ---- notes --------
-# anything you don't want loaded into the Quarto file but 
-# keep in the R file, just give it its own label and then don't include that label
-# in the Quarto file. 
-# For example, you may try excluding some of the excessive comments. 
+# Finished Project 1! 
 
-# Dealing with NA or "bad" data:
-# removing anyone who had "faulty" or missing data is one approach.
-# it's often not the best. based on your question and your analysis approach,
-# you might want to do cleaning differently (e.g. keep individuals with some missing information)
-
-# Saving data as RDS:
-# I suggest you save your processed and cleaned data as RDS or RDA/Rdata files. 
-# This preserves coding like factors, characters, numeric, etc. 
-# If you save as CSV, that information would get lost.
-# However, CSV is better for sharing with others since it's plain text. 
-
-# If you do CSV, you must to write down somewhere what each variable is.
-# See here for some suggestions on how to store your processed data:
-# http://www.sthda.com/english/wiki/saving-data-into-r-data-format-rds-and-rdata

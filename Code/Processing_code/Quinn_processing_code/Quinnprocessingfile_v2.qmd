@@ -1,27 +1,22 @@
 ---
-title: "An example cleaning script with code pulled in from R script"
-author: "Marguerite Butler"
-date: "2023-02-15"
+title: "Cleaning script with code pulled in from R script"
+author: "Quinn Moon"
+date: "2023-03-03"
 output: html_document
 ---
 
 
 # Processing script (data cleaning) with code pulled in from script
 
-This is essentially the same as the other Quarto file, but now the code is not inside this file. Instead, it is pulled in from the R script using the code chunk labels.
-
-
 # Setup
 
 This needs to run to load the R script so we can include the code chunks below.
 
-Note that you can pull in more than one R script if you want.
-
 ```{r, include=FALSE, cache=FALSE}
-knitr::read_chunk('processingcode.R')
+knitr::read_chunk('QuinnProcessing.R')
 ```
 
-Load needed packages. Instead of having R commands here, we can have R do it by pulls in the code from the R script according to the labels. Here the code chuck below is replaced with the `packages` code chunk from `processingcode.R`. 
+Load needed packages. Instead of having R commands here, we can have R do it by pulls in the code from the R script according to the labels. Here the code chuck below is replaced with the `packages` code chunk from `QuinnProcessing.R`. 
 
 
 ```{r, packages, message = FALSE, warning = FALSE}
@@ -124,14 +119,16 @@ We also want to have Species, Sex, and Island coded as a categorical/factor vari
 
 Make bivariate plots for any remaining continous data to ensure there are no further errors. It is a good check on the distribution of the data as well. 
 
-Make histograms or densities of at least mass by discrete category, to check for any potential category errors, extra categories, etc.  
+Make histograms or densities of at mass by discrete category, to check for any potential category errors, extra categories, etc.  
 
 You should look through all of the data, variable by variable, or by pairs of variables.
+```{r, bivariateplots}
+```
 
 
 # Finalize your cleaned dataset. 
 
-Drop any variables (columns) that you wonʻt analyze.  If you have extra levels after dropping some values, you may want to relevel your factors (this may or may not happen). 
+Drop any variables (columns) that you wonʻt analyze, like comments.  If you have extra levels after dropping some values, you may want to relevel your factors (this may or may not happen). 
 
 To specify new levels or orders of levels:
 
@@ -146,25 +143,12 @@ makes it easier to add steps above
 ```{r, savedata}
 ```
 
-Finally, we save the clean data as RDS file. I suggest you save your processed and cleaned data as RDS or RDA/Rdata files, as well as a copy as .csv
-
+Save the clean data as RDS file and as a csv file. 
 RDS/Rdata preserves coding like factors, characters, numeric, etc.  If you save as CSV, that information would get lost.
 However, CSV is better for sharing with others since it's plain text. If you do CSV, you might want to write down somewhere what each variable is (i.e. a data dictionary).
+If needed, the updated data dictionary can be loaded
 
+```{r, newdatadictionary}
+```
 
-# Notes 
-
--  Anything you don't want loaded into the Quarto file but 
-keep in the R file, just give it its own label and then just leave that label out of the Quarto file. For example, you may try excluding some of the excessive comments. 
-
--  Dealing with NA or "bad" data:
-Removing anyone who had "faulty" or missing data is one approach, but it's often not the best. Based on your question and your analysis approach, you might want to do cleaning differently (e.g. keep individuals with some missing information)
-
--  Saving data as RDS:
-I suggest you save your processed and cleaned data as RDS or RDA/Rdata files.  This preserves coding like factors, characters, numeric, etc.  If you save as CSV, that information would get lost.
-However, CSV is better for sharing with others since it's plain text. 
-
--  If you do CSV, you must to write down somewhere what each variable is (i.e. in a data dictionary).
-
--  See here for some suggestions on how to store your processed data:
-<http://www.sthda.com/english/wiki/saving-data-into-r-data-format-rds-and-rdata>
+# The End! 
