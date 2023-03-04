@@ -3,10 +3,10 @@
 #The first step is to install the following packages
 ## ---- packages --------
 #Install needed packages
-install.packages(dplyr) 
-install.packages(tidyr) 
-install.packages(skimr)
-install.packages(ggplot2) #for making figures
+#install.packages(dplyr) 
+#install.packages(tidyr) 
+#install.packages(skimr)
+#install.packages(ggplot2) #for making figures
 #load needed packages. make sure they are installed.
 require(dplyr) #for data processing/cleaning
 require(tidyr) #for data processing/cleaning
@@ -17,8 +17,8 @@ require(ggplot2) #for making plots
 getwd()
 ## ---- loaddata --------
 #path to data
-
-data_location <- "../../Data/Raw_data/penguins_raw_dirty.csv"
+getwd()
+data_location <- "../../../Data/Raw_data/penguins_raw_dirty.csv"
 data_path <- "../../Data/Raw_data/"
 
 #load data. 
