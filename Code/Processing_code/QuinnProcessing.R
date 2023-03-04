@@ -18,7 +18,7 @@ getwd()
 ## ---- loaddata --------
 #path to data
 getwd()
-data_location <- "../../../Data/Raw_data/penguins_raw_dirty.csv"
+data_location <- "../../Data/Raw_data/penguins_raw_dirty.csv"
 data_path <- "../../Data/Raw_data/"
 
 #load data. 
