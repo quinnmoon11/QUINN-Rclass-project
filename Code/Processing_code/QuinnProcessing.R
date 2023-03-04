@@ -233,8 +233,8 @@ plot(d3$`Delta 15 N (o/oo)`, d3$`Delta 13 C (o/oo)`)
 ggplot(data = d3) #load cleaned data
 
 #map densities- can be done on all continous data
-ggplot(d3, aes(x = age)) +
-  geom_density()
+#ggplot(d3, aes(x = Island)) +
+ # geom_density()
   
 #using ggplot histogram/barplots of body mass vs discrete categories 
 ggplot(d3, aes(x = Species, y = `Body Mass (g)`)) + 
