@@ -1,25 +1,32 @@
 ###############################
 # The following script serves to visualize and summarize the data followed with some data cleaning
 #The first step is to install the following packages
+
+#To source an R script, open a console in the same directory as the .R file and type 'source("File.R")'
+
 ## ---- packages --------
 #Install needed packages
 #install.packages(dplyr) 
 #install.packages(tidyr) 
 #install.packages(skimr)
-#install.packages(ggplot2) #for making figures
+#install.packages(ggplot2) 
+
 #load needed packages. make sure they are installed.
 require(dplyr) #for data processing/cleaning
 require(tidyr) #for data processing/cleaning
 require(skimr) #for nice visualization of data 
 require(skimr) #for nice visualization of data 
 require(ggplot2) #for making plots
+
 #Ensure you are working in Code/Processing_code
 getwd()
+
 ## ---- loaddata --------
 #path to data
 getwd()
 data_location <- "../../Data/Raw_data/penguins_raw_dirty.csv"
 data_path <- "../../Data/Raw_data/"
+processed_data_path <- "../../Data/Processed_data/"
 
 #load data. 
 # I am using check.names=F because these names have spaces and parentheses
@@ -50,14 +57,7 @@ tail(rawdata)
 #this is a nice way to look at data
 skimr::skim(rawdata)
 
-#See all the data by just typing `rawdata` at the R console.
-rawdata
-#Note that the names here have spaces and () which are usable, but 
-# force us to quote the character strings. You can either keep doing so 
-# rawdata$`Culmen Length (mm)` or rename to something more convenient.
-# You may shorten/rename the names 
-
-# names(rawdata) <- c("study", "sampleN", "species", "region", "island", "stage", "id", ... )
+# rawdata #If you want to see all the raw data - just type 'rawdata'
 
 ## ---- cleandata1 --------
 # Inspecting the data, we find some problems that need addressing:
@@ -67,7 +67,7 @@ rawdata
 #check skimr or 
 unique(rawdata$Species)
 
-# Notice that some of the species names have typos? 
+# Notice that some of the species names have typos 
 # Letʻs save rawdata as d1, and modify d1 so we can compare versions. 
 
 d1 <- rawdata
@@ -76,38 +76,35 @@ d1 <- rawdata
 
 d1$Species <- sub("gTin", "guin", d1$Species)
 
-# look at partially fixed data again- repeat everytime
+# look at partially fixed data again- repeat everytime (if needed)
 unique(d1$Species)
 
 d1$Species <- sub("gTin", "guin", d1$Species)
-unique(d1$Species)
+#unique(d1$Species)
 d1$Species <- sub("PeOg", "Peng", d1$Species)
-unique(d1$Species)
+#unique(d1$Species)
 d1$Species <- sub("AdeKie", "Adelie", d1$Species)
-unique(d1$Species)
+#unique(d1$Species)
 d1$Species <- sub("lieM", "lie ", d1$Species)
-unique(d1$Species)
+#unique(d1$Species)
 d1$Species <- sub("Ven", "Gen", d1$Species)
-unique(d1$Species)
+unique(d1$Species) #verify names corrected
+
 #shorten names
 ii <- grep("(Pygoscelis adeliae)", d1$Species)
 d1$Species[ii] <- "Adelie"
-unique(d1$Species)
+#unique(d1$Species) #to verify name was shortened
 iii <- grep("(Pygoscelis papua)", d1$Species)
 d1$Species[iii] <- "Gentoo"
-unique(d1$Species)
+#unique(d1$Species) only check if needed
 iiii <- grep("(Pygoscelis antarctica)", d1$Species)
 d1$Species[iiii] <- "Chinstrap"
-unique(d1$Species)
-## ---- comment1 --------
- 
+unique(d1$Species) #verify names shortened
 
-# NOTE: Check your work with each change.  Debug as you go, never all at once. 
- 
+## ---- comment1 --------
 
 # There is an entry for `Culmen Length (mm)` which says "missing" instead of a number or NA. 
-# Should we delete this record (and all of the variables)?
-# This "missing" entry also turned all culmen length entries into characters instead of numeric.
+# This "missing" entry turned all culmen length entries into characters instead of numeric.
 # That conversion to character also means that our summary function isn't very meaningful.
 # So let's fix that first.
 
@@ -172,7 +169,6 @@ plot(d2$`Body Mass (g)`, d2$`Culmen Length (mm)`)
 
 
 ## ---- comment3 --------
-#Look better?
 
 # Now let's look at body mass. 
 #  There are penguins with body mass of <100g when the others are over 3000. 
@@ -201,7 +197,6 @@ hist(d3$`Body Mass (g)`)
 plot(d3$`Body Mass (g)`, d3$`Culmen Length (mm)`)
 
 ## ---- comment5 --------
-# Does it look better?
 
 # We also want to have Species, Sex, and Island coded as a categorical/factor variable
 
@@ -230,7 +225,6 @@ plot(d3$`Delta 15 N (o/oo)`, d3$`Delta 13 C (o/oo)`)
 # Make barplots or densities of least mass by discrete category
 #Can also do this visualization (and others) in ggplot2
 #ggplot2 was loaded earlier
-ggplot(data = d3) #load cleaned data
 
 #map densities- can be done on all continous data
 #ggplot(d3, aes(x = Island)) +
@@ -276,8 +270,9 @@ write.csv(processeddata, file = save_data_location_csv, row.names=FALSE)
 
 ## ---- newdatadictionary --------
 #If needed, the updated data dictionary can be loaded
-newdictionary <- read.csv(paste(data_path, "Quinndatadictionary.csv", sep=""))
-print(newdictionary)
+newdictionary <- read.csv(paste(processed_data_path, "Quinndatadictionary.csv", sep=""))
+save_newdic_location_csv <- "../../Data/Processed_data/Quinndatadictionary.csv"
+write.csv(newdictionary, file = save_newdic_location_csv, row.names=FALSE)
 ## ---- notes --------
 # Finished Project 1! 
 
